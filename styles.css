@@ -27,6 +27,25 @@ button.delete-btn {
     cursor: pointer;
 }
 
-button.delete全世界 -btn:hover {
-    background-color: #ff0000;
+button.delete-btn:hover {
+    background-color: #cc0000;
+}
+
+/* Progress bar styling */
+.progress-bar {
+    width: 100%;
+    background-color: #4a5568;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-bar-fill {
+    height: 20px;
+    background: linear-gradient(to right, #ff1493, #00ff00);
+    transition: width 0.3s ease-in-out;
+}
+
+/* Active tab styling */
+.tab-btn.active {
+    background-color: #ff1493 !important;
 }
