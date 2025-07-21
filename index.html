@@ -4,39 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StackZ</title>
-    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts: Poppins and Bebas Neue -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Bebas+Neue&display=swap" rel="stylesheet">
-    <!-- GSAP CDN for animations -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-    <!-- Chart.js CDN for pie chart -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Custom CSS -->
     <link href="styles.css" rel="stylesheet">
 </head>
 <body class="bg-gradient-to-r from-pink-500 to-blue-500 min-h-screen text-white font-poppins">
-    <!-- Navigation Tabs -->
     <nav class="w-full bg-white bg-opacity-10 p-4">
         <ul class="flex justify-center space-x-4">
-            <li><button class="tab-btn active bg-pink-500 hover:bg-pink-600 text-white py-2 px-4 rounded font-semibold" data-tab="home" aria-selected="true">Home</button></li>
-            <li><button class="tab-btn bg-gray-900 hover:bg-gray-700 text-white py-2 px-4 rounded font-semibold" data-tab="goals" aria-selected="false">Goals</button></li>
-            <li><button class="tab-btn bg-gray-900 hover:bg-gray-700 text-white py-2 px-4 rounded font-semibold" data-tab="insights" aria-selected="false">Insights</button></li>
-            <li><button class="tab-btn bg-gray-900 hover:bg-gray-700 text-white py-2 px-4 rounded font-semibold" data-tab="hustle" aria-selected="false">Hustle Hub</button></li>
+            <li><button class="tab-btn active bg-pink-500 hover:bg-pink-600 text-white py-2 px-4 rounded font-semibold" data-tab="home" aria-selected="true" tabindex="0">Home</button></li>
+            <li><button class="tab-btn bg-gray-900 hover:bg-gray-700 text-white py-2 px-4 rounded font-semibold" data-tab="goals" aria-selected="false" tabindex="0">Goals</button></li>
+            <li><button class="tab-btn bg-gray-900 hover:bg-gray-700 text-white py-2 px-4 rounded font-semibold" data-tab="insights" aria-selected="false" tabindex="0">Insights</button></li>
+            <li><button class="tab-btn bg-gray-900 hover:bg-gray-700 text-white py-2 px-4 rounded font-semibold" data-tab="hustle" aria-selected="false" tabindex="0">Hustle Hub</button></li>
         </ul>
     </nav>
 
-    <!-- Home Tab -->
     <div id="home" class="tab-content flex flex-col items-center py-8">
-        <!-- Mascot -->
-        <div class="mascot text-5xl cursor-pointer" title="Click for a vibe check!" aria-label="StackZ mascot">💸Z</div>
-        <p class="mascot-message text-lg text-center mb-4">Stack that cash, fam! 💸</p>
-        <!-- Logo -->
+        <div class="mascot text-5xl cursor-pointer" title="Click for a vibe check!" aria-label="StackZ mascot" tabindex="0">💸Z</div>
+        <p class="mascot-message text-lg text-center mb-4" aria-live="polite">Stack that cash, fam! 💸</p>
         <h1 class="text-5xl md:text-7xl font-bebas text-center mb-8 neon-glow pulse-logo">StackZ</h1>
-        <!-- Welcome Message -->
         <p class="text-lg text-center mb-8">StackZ: Your vibe for managing that paycheck!</p>
         
-        <!-- Paycheck Allocation Tool -->
+        <div class="bg-white bg-opacity-10 p-6 rounded-lg shadow-lg w-full max-w-md mb-8">
+            <h2 class="text-2xl font-semibold mb-4 text-center">Your Badges 🏆</h2>
+            <div id="badges" class="flex flex-wrap gap-4 justify-center" aria-live="polite"></div>
+        </div>
+        
+        <div id="notification" class="fixed top-4 left-1/2 transform -translate-x-1/2 bg-pink-500 text-white p-4 rounded-lg shadow-lg hidden" aria-live="assertive"></div>
+        
         <div class="bg-white bg-opacity-10 p-6 rounded-lg shadow-lg w-full max-w-md mb-8">
             <h2 class="text-2xl font-semibold mb-4 text-center">Paycheck Allocation</h2>
             <form id="paycheck-form">
@@ -61,12 +56,11 @@
                         </div>
                     </div>
                 </div>
-                <button type="submit" class="w-full bg-pink-500 hover:bg-pink-600 text-white py-2 rounded font-semibold pulse-button sound-btn">Allocate Paycheck</button>
+                <button type="submit" class="w-full bg-pink-500 hover:bg-pink-600 text-white py-2 rounded font-semibold pulse-button sound-btn" tabindex="0">Allocate Paycheck</button>
             </form>
-            <div id="allocation-result" class="mt-4 text-center"></div>
+            <div id="allocation-result" class="mt-4 text-center" aria-live="polite"></div>
         </div>
 
-        <!-- Spending Input Form -->
         <div class="bg-white bg-opacity-10 p-6 rounded-lg shadow-lg w-full max-w-md">
             <h2 class="text-2xl font-semibold mb-4 text-center">Add Your Spending</h2>
             <form id="spending-form">
@@ -90,21 +84,19 @@
                         <option value="Other">Other</option>
                     </select>
                 </div>
-                <button type="submit" class="w-full bg-pink-500 hover:bg-pink-600 text-white py-2 rounded font-semibold pulse-button sound-btn">Add Spending</button>
+                <button type="submit" class="w-full bg-pink-500 hover:bg-pink-600 text-white py-2 rounded font-semibold pulse-button sound-btn" tabindex="0">Add Spending</button>
             </form>
         </div>
 
-        <!-- Dashboard -->
         <div class="mt-8 w-full max-w-md">
             <h2 class="text-2xl font-semibold mb-4 text-center">Your Dashboard</h2>
             <div class="bg-white bg-opacity-10 p-4 rounded-lg shadow-lg">
                 <p class="text-lg">Total Spending: $<span id="total-spending">0.00</span></p>
                 <p class="text-lg mt-2">Vibe Check: <span id="vibe-check">Let's start stacking! 😎</span></p>
-                <div id="category-summary" class="mt-4"></div>
+                <div id="category-summary" class="mt-4" aria-live="polite"></div>
             </div>
         </div>
 
-        <!-- Spending History -->
         <div class="mt-8 w-full max-w-md">
             <h2 class="text-2xl font-semibold mb-4 text-center">Spending History</h2>
             <div class="bg-white bg-opacity-10 p-4 rounded-lg shadow-lg">
@@ -117,13 +109,12 @@
                             <th class="p-2">Action</th>
                         </tr>
                     </thead>
-                    <tbody id="spending-history"></tbody>
+                    <tbody id="spending-history" aria-live="polite"></tbody>
                 </table>
             </div>
         </div>
     </div>
 
-    <!-- Goals Tab -->
     <div id="goals" class="tab-content hidden flex flex-col items-center py-8">
         <h2 class="text-3xl font-bebas mb-8 neon-glow pulse-logo">Set Your Goals 🎯</h2>
         <p class="text-lg text-center mb-8" id="motivational-message">Keep grinding for that drip! 🔥</p>
@@ -143,32 +134,27 @@
                     <input type="number" id="goal-saved" class="w-full p-2 rounded bg-gray-800 text-white border-none focus:outline-none" placeholder="e.g., 50" min="0" step="0.01" required>
                 </div>
                 <input type="hidden" id="goal-index" value="-1">
-                <button type="submit" class="w-full bg-pink-500 hover:bg-pink-600 text-white py-2 rounded font-semibold pulse-button sound-btn">Save Goal</button>
+                <button type="submit" class="w-full bg-pink-500 hover:bg-pink-600 text-white py-2 rounded font-semibold pulse-button sound-btn" tabindex="0">Save Goal</button>
             </form>
         </div>
         <div class="mt-8 w-full max-w-md">
             <h3 class="text-2xl font-semibold mb-4 text-center">Your Goals</h3>
-            <div id="goal-list" class="bg-white bg-opacity-10 p-4 rounded-lg shadow-lg"></div>
+            <div id="goal-list" class="bg-white bg-opacity-10 p-4 rounded-lg shadow-lg" aria-live="polite"></div>
         </div>
     </div>
 
-    <!-- Insights Tab -->
     <div id="insights" class="tab-content hidden flex flex-col items-center py-8">
         <h2 class="text-3xl font-bebas mb-8 neon-glow pulse-logo">Insights 📊</h2>
         <div class="w-full max-w-md">
             <canvas id="spending-chart" class="mb-8"></canvas>
-            <div id="insights-list" class="bg-white bg-opacity-10 p-4 rounded-lg shadow-lg"></div>
+            <div id="insights-list" class="bg-white bg-opacity-10 p-4 rounded-lg shadow-lg" aria-live="polite"></div>
         </div>
     </div>
 
-    <!-- Hustle Hub Tab -->
     <div id="hustle" class="tab-content hidden flex flex-col items-center py-8">
-        <!-- Mascot -->
-        <div class="mascot text-5xl cursor-pointer" title="Click for a vibe check!" aria-label="StackZ mascot">💸Z</div>
-        <p class="mascot-message text-lg text-center mb-4">Find your hustle, slay the game! 🔥</p>
-        <!-- Header -->
+        <div class="mascot text-5xl cursor-pointer" title="Click for a vibe check!" aria-label="StackZ mascot" tabindex="0">💸Z</div>
+        <p class="mascot-message text-lg text-center mb-4" aria-live="polite">Find your hustle, slay the game! 🔥</p>
         <h2 class="text-3xl font-bebas mb-8 neon-glow">Hustle Hub: Turn Your Time into Cash! 💼</h2>
-        <!-- Filter Form -->
         <div class="bg-white bg-opacity-10 p-6 rounded-lg shadow-lg w-full max-w-md mb-8">
             <h3 class="text-2xl font-semibold mb-4 text-center">Find Your Hustle</h3>
             <form id="hustle-form">
@@ -184,18 +170,18 @@
                     <label for="time-commitment" class="block text-sm">Time Commitment</label>
                     <select id="time-commitment" class="w-full p-2 rounded bg-gray-800 text-white border-none focus:outline-none">
                         <option value="all">All</option>
-                        <option value="Low">Low (&lt;5 hours/week)</option>
+                        <option value="Low">Low (<5 hours/week)</option>
                         <option value="Medium">Medium (5-10 hours/week)</option>
-                        <option value="High">High (&gt;10 hours/week)</option>
+                        <option value="High">High (>10 hours/week)</option>
                     </select>
                 </div>
                 <div class="mb-4">
                     <label for="capital-needed" class="block text-sm">Capital Needed</label>
                     <select id="capital-needed" class="w-full p-2 rounded bg-gray-800 text-white border-none focus:outline-none">
                         <option value="all">All</option>
-                        <option value="Low">Low (&lt;₦10,000)</option>
+                        <option value="Low">Low (<₦10,000)</option>
                         <option value="Medium">Medium (₦10,000-₦50,000)</option>
-                        <option value="High">High (&gt;₦50,000)</option>
+                        <option value="High">High (>₦50,000)</option>
                     </select>
                 </div>
                 <div class="mb-4">
@@ -207,10 +193,9 @@
                         <option value="Advanced">Advanced</option>
                     </select>
                 </div>
-                <button type="submit" class="w-full bg-pink-500 hover:bg-pink-600 text-white py-2 rounded font-semibold pulse-button sound-btn">Find My Hustle</button>
+                <button type="submit" class="w-full bg-pink-500 hover:bg-pink-600 text-white py-2 rounded font-semibold pulse-button sound-btn" tabindex="0">Find My Hustle</button>
             </form>
         </div>
-        <!-- Hustle Progress Tracker -->
         <div class="bg-white bg-opacity-10 p-6 rounded-lg shadow-lg w-full max-w-md mb-8">
             <h3 class="text-2xl font-semibold mb-4 text-center">Track Your Hustle</h3>
             <form id="hustle-progress-form">
@@ -226,21 +211,18 @@
                     <label for="hustle-earnings" class="block text-sm">Current Earnings ($)</label>
                     <input type="number" id="hustle-earnings" class="w-full p-2 rounded bg-gray-800 text-white border-none focus:outline-none" placeholder="e.g., 50" min="0" step="0.01" required>
                 </div>
-                <button type="submit" class="w-full bg-pink-500 hover:bg-pink-600 text-white py-2 rounded font-semibold pulse-button sound-btn">Update Progress</button>
+                <button type="submit" class="w-full bg-pink-500 hover:bg-pink-600 text-white py-2 rounded font-semibold pulse-button sound-btn" tabindex="0">Update Progress</button>
             </form>
-            <div id="hustle-progress-list" class="mt-4"></div>
+            <div id="hustle-progress-list" class="mt-4" aria-live="polite"></div>
         </div>
-        <!-- Hustle List -->
         <div class="w-full max-w-md">
             <h3 class="text-2xl font-semibold mb-4 text-center">Side Hustles</h3>
-            <div id="hustle-list" class="bg-white bg-opacity-10 p-4 rounded-lg shadow-lg"></div>
+            <div id="hustle-list" class="bg-white bg-opacity-10 p-4 rounded-lg shadow-lg" aria-live="polite"></div>
         </div>
     </div>
 
-    <!-- Audio for button clicks -->
     <audio id="click-sound" src="https://assets.mixkit.co/active_storage/sfx/2568/2568.wav"></audio>
 
-    <!-- JavaScript -->
     <script src="script.js"></script>
 </body>
 </html>

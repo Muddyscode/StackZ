@@ -1,13 +1,11 @@
-// Initialize data from local storage
 let spending = JSON.parse(localStorage.getItem('spending')) || [];
 let goals = JSON.parse(localStorage.getItem('goals')) || [];
 let paycheck = JSON.parse(localStorage.getItem('paycheck')) || { salary: 0, allocations: {} };
 let hustleProgress = JSON.parse(localStorage.getItem('hustleProgress')) || [];
-let hustleFilters = JSON.parse(localStorage.getItem('hustleFilters')) || {};
+let hustleFilters = JSON.parse(localStorage.getItem('hustleFilters')) || [];
+let badges = JSON.parse(localStorage.getItem('badges')) || [];
 
-// Side hustle data
 const sideHustles = [
-    // QuickCash
     { name: "POS Business", category: "QuickCash", description: "Run a mobile payment terminal for cashless transactions 💳", capital: "Medium", time: "Medium", skill: "Basic", link: "https://paystack.com" },
     { name: "Affiliate Marketing", category: "QuickCash", description: "Promote products on social media for commissions 🤑", capital: "Low", time: "Low", skill: "None", link: "https://www.jumia.com.ng/affiliate-program/" },
     { name: "Ride-Sharing Driver", category: "QuickCash", description: "Drive for Uber or Bolt with your vehicle 🚗", capital: "Low", time: "Medium", skill: "Basic", link: "https://www.uber.com/ng/en/drive/" },
@@ -15,7 +13,6 @@ const sideHustles = [
     { name: "Referral Agent", category: "QuickCash", description: "Connect landlords with tenants via social media 🏠", capital: "Low", time: "Low", skill: "None", link: "#" },
     { name: "Social Media Management", category: "QuickCash", description: "Manage Instagram/X accounts for local brands 📱", capital: "Low", time: "Medium", skill: "Basic", link: "https://www.canva.com" },
     { name: "Delivery Services", category: "QuickCash", description: "Deliver packages/food via bike or motorcycle 🚚", capital: "Medium", time: "High", skill: "Basic", link: "https://www.glovoapp.com" },
-    // Passionate
     { name: "Content Creation", category: "Passionate", description: "Make YouTube/TikTok videos on your passion 🎥", capital: "Low", time: "High", skill: "Basic", link: "https://www.youtube.com" },
     { name: "Freelance Writing", category: "Passionate", description: "Write articles for global clients on Upwork ✍️", capital: "Low", time: "Medium", skill: "Advanced", link: "https://www.upwork.com" },
     { name: "Graphic Design", category: "Passionate", description: "Design logos or graphics using Canva 🎨", capital: "Low", time: "Medium", skill: "Basic", link: "https://www.canva.com" },
@@ -25,7 +22,6 @@ const sideHustles = [
     { name: "Fashion Design", category: "Passionate", description: "Create custom outfits or accessories 👗", capital: "Medium", time: "High", skill: "Advanced", link: "#" }
 ];
 
-// Load data on page load
 document.addEventListener('DOMContentLoaded', () => {
     updateDashboard();
     updateSpendingHistory();
@@ -35,11 +31,22 @@ document.addEventListener('DOMContentLoaded', () => {
     updateHustleProgress();
     updatePaycheckAllocation();
     updateMotivationalMessage();
+    updateBadges();
     setupTabNavigation();
     setupMascot();
 });
 
-// Setup mascot click-to-quote
+function loadChartJs(callback) {
+    if (window.Chart) {
+        callback();
+        return;
+    }
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/chart.js';
+    script.onload = callback;
+    document.head.appendChild(script);
+}
+
 function setupMascot() {
     const mascot = document.querySelectorAll('.mascot');
     const mascotMessages = document.querySelectorAll('.mascot-message');
@@ -62,7 +69,47 @@ function setupMascot() {
     });
 }
 
-// Handle spending form submission
+function showNotification(message) {
+    const notification = document.getElementById('notification');
+    notification.textContent = message;
+    notification.classList.remove('hidden');
+    gsap.fromTo(notification, { opacity: 0, y: -20 }, { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' });
+    setTimeout(() => {
+        gsap.to(notification, { opacity: 0, y: -20, duration: 0.5, ease: 'power2.in', onComplete: () => {
+            notification.classList.add('hidden');
+        } });
+    }, 3000);
+}
+
+function updateBadges() {
+    const totalSpending = spending.reduce((sum, item) => sum + item.amount, 0);
+    const hasGoalCompleted = goals.some(goal => goal.saved >= goal.target);
+    const newBadges = [];
+    
+    if (totalSpending <= 50 && !badges.includes('Budget Boss')) {
+        newBadges.push('Budget Boss');
+        showNotification('You earned the Budget Boss badge! Spending under $50! 🤑');
+    }
+    if (hustleProgress.length >= 3 && !badges.includes('Hustle Starter')) {
+        newBadges.push('Hustle Starter');
+        showNotification('Hustle Starter badge unlocked! 3+ hustles added! 💼');
+    }
+    if (hasGoalCompleted && !badges.includes('Goal Slayer')) {
+        newBadges.push('Goal Slayer');
+        showNotification('Goal Slayer badge earned! You crushed a goal! 🎯');
+    }
+    
+    if (newBadges.length > 0) {
+        badges.push(...newBadges);
+        localStorage.setItem('badges', JSON.stringify(badges));
+    }
+    
+    const badgesDiv = document.getElementById('badges');
+    badgesDiv.innerHTML = badges.length > 0
+        ? badges.map(badge => `<span class="badge">${badge}</span>`).join('')
+        : '<p>No badges yet! Keep stacking to earn some! 😎</p>';
+}
+
 document.getElementById('spending-form').addEventListener('submit', (e) => {
     e.preventDefault();
     const amount = parseFloat(document.getElementById('amount').value);
@@ -77,10 +124,10 @@ document.getElementById('spending-form').addEventListener('submit', (e) => {
     updateDashboard();
     updateSpendingHistory();
     updateInsights();
+    updateBadges();
     document.getElementById('spending-form').reset();
 });
 
-// Handle paycheck allocation form submission
 document.getElementById('paycheck-form').addEventListener('submit', (e) => {
     e.preventDefault();
     const salary = parseFloat(document.getElementById('salary').value);
@@ -105,7 +152,6 @@ document.getElementById('paycheck-form').addEventListener('submit', (e) => {
     document.getElementById('paycheck-form').reset();
 });
 
-// Handle goal form submission
 document.getElementById('goal-form').addEventListener('submit', (e) => {
     e.preventDefault();
     const name = document.getElementById('goal-name').value;
@@ -125,14 +171,17 @@ document.getElementById('goal-form').addEventListener('submit', (e) => {
     updateGoalList();
     if (saved >= target) {
         triggerConfetti();
+        showNotification('You’re crushing it! Goal completed! 🎉');
+    } else if (saved >= target * 0.5) {
+        showNotification('Halfway to your goal! Keep it up! 💪');
     }
     
+    updateBadges();
     document.getElementById('goal-form').reset();
     document.getElementById('goal-index').value = -1;
     updateMotivationalMessage();
 });
 
-// Handle hustle form submission
 document.getElementById('hustle-form').addEventListener('submit', (e) => {
     e.preventDefault();
     const category = document.getElementById('hustle-category').value;
@@ -147,7 +196,6 @@ document.getElementById('hustle-form').addEventListener('submit', (e) => {
     updateHustleList();
 });
 
-// Handle hustle progress form submission
 document.getElementById('hustle-progress-form').addEventListener('submit', (e) => {
     e.preventDefault();
     const name = document.getElementById('hustle-name').value;
@@ -159,10 +207,13 @@ document.getElementById('hustle-progress-form').addEventListener('submit', (e) =
     document.getElementById('click-sound').play();
     gsap.fromTo('#hustle-progress-form', { scale: 1 }, { scale: 1.05, duration: 0.2, yoyo: true, repeat: 1 });
     updateHustleProgress();
+    if (hustleProgress.length === 1) {
+        showNotification('First hustle added! You’re on fire! 🔥');
+    }
+    updateBadges();
     document.getElementById('hustle-progress-form').reset();
 });
 
-// Update dashboard with total spending, vibe check, and category summary
 function updateDashboard() {
     const total = spending.reduce((sum, item) => sum + item.amount, 0).toFixed(2);
     document.getElementById('total-spending').textContent = total;
@@ -204,7 +255,6 @@ function updateDashboard() {
     document.getElementById('vibe-check').textContent = vibe;
 }
 
-// Update spending history table
 function updateSpendingHistory() {
     const tbody = document.getElementById('spending-history');
     tbody.innerHTML = '';
@@ -214,7 +264,7 @@ function updateSpendingHistory() {
             <td class="p-2">$${item.amount.toFixed(2)}</td>
             <td class="p-2">${item.category}</td>
             <td class="p-2">${item.date}</td>
-            <td class="p-2"><button class="delete-btn sound-btn" data-index="${index}">Delete</button></td>
+            <td class="p-2"><button class="delete-btn sound-btn" data-index="${index}" tabindex="0">Delete</button></td>
         `;
         tbody.appendChild(row);
     });
@@ -228,11 +278,11 @@ function updateSpendingHistory() {
             updateDashboard();
             updateSpendingHistory();
             updateInsights();
+            updateBadges();
         });
     });
 }
 
-// Update goal list with progress bars and edit functionality
 function updateGoalList() {
     const goalList = document.getElementById('goal-list');
     goalList.innerHTML = '';
@@ -245,8 +295,8 @@ function updateGoalList() {
             <div class="progress-bar">
                 <div class="progress-bar-fill" style="width: ${percentage}%"></div>
             </div>
-            <button class="delete-btn mt-2 sound-btn" data-index="${index}">Delete</button>
-            <button class="edit-btn mt-2 ml-2 bg-blue-500 hover:bg-blue-600 text-white py-1 px-2 rounded sound-btn" data-index="${index}">Edit</button>
+            <button class="delete-btn mt-2 sound-btn" data-index="${index}" tabindex="0">Delete</button>
+            <button class="edit-btn mt-2 ml-2 bg-blue-500 hover:bg-blue-600 text-white py-1 px-2 rounded sound-btn" data-index="${index}" tabindex="0">Edit</button>
         `;
         goalList.appendChild(div);
     });
@@ -259,6 +309,7 @@ function updateGoalList() {
             document.getElementById('click-sound').play();
             updateGoalList();
             updateMotivationalMessage();
+            updateBadges();
         });
     });
     
@@ -275,7 +326,6 @@ function updateGoalList() {
     });
 }
 
-// Update hustle list with filtered results
 function updateHustleList() {
     const hustleList = document.getElementById('hustle-list');
     hustleList.innerHTML = '';
@@ -307,7 +357,6 @@ function updateHustleList() {
     }
 }
 
-// Update hustle progress tracker
 function updateHustleProgress() {
     const progressList = document.getElementById('hustle-progress-list');
     progressList.innerHTML = '';
@@ -320,7 +369,7 @@ function updateHustleProgress() {
             <div class="progress-bar">
                 <div class="progress-bar-fill" style="width: ${percentage}%"></div>
             </div>
-            <button class="delete-btn mt-2 sound-btn" data-index="${index}">Delete</button>
+            <button class="delete-btn mt-2 sound-btn" data-index="${index}" tabindex="0">Delete</button>
         `;
         progressList.appendChild(div);
     });
@@ -332,11 +381,11 @@ function updateHustleProgress() {
             localStorage.setItem('hustleProgress', JSON.stringify(hustleProgress));
             document.getElementById('click-sound').play();
             updateHustleProgress();
+            updateBadges();
         });
     });
 }
 
-// Update paycheck allocation display
 function updatePaycheckAllocation() {
     const result = document.getElementById('allocation-result');
     if (paycheck.salary === 0) {
@@ -350,7 +399,6 @@ function updatePaycheckAllocation() {
     result.innerHTML = `<p class="text-lg">Salary: $${paycheck.salary.toFixed(2)}</p><p>${allocations}</p>`;
 }
 
-// Update motivational message
 function updateMotivationalMessage() {
     const messages = [
         "Keep grinding for that drip! 🔥",
@@ -363,12 +411,11 @@ function updateMotivationalMessage() {
     document.getElementById('motivational-message').textContent = randomMessage;
 }
 
-// GSAP confetti animation
 function triggerConfetti() {
     gsap.to('body', {
         duration: 0,
         onStart: () => {
-            for (let i = 0; i < 50; i++) {
+            for (let i = 0; i < 20; i++) {
                 const confetti = document.createElement('div');
                 confetti.className = 'confetti';
                 confetti.style.position = 'absolute';
@@ -391,58 +438,58 @@ function triggerConfetti() {
     });
 }
 
-// Update insights with pie chart and vibe checks
 function updateInsights() {
-    const categories = {};
-    spending.forEach(item => {
-        categories[item.category] = (categories[item.category] || 0) + item.amount;
-    });
-    
-    const chartData = {
-        labels: Object.keys(categories),
-        datasets: [{
-            data: Object.values(categories),
-            backgroundColor: ['#ff1493', '#00b7eb', '#00ff00', '#ff4444', '#ffd700', '#6b7280', '#8b5cf6', '#ec4899', '#3b82f6', '#22c55e']
-        }]
-    };
-    
-    const ctx = document.getElementById('spending-chart').getContext('2d');
-    if (window.spendingChart) window.spendingChart.destroy();
-    window.spendingChart = new Chart(ctx, {
-        type: 'pie',
-        data: chartData,
-        options: {
-            responsive: true,
-            plugins: {
-                legend: { position: 'bottom', labels: { color: '#fff' } }
-            }
-        }
-    });
-    
-    const insightsList = document.getElementById('insights-list');
-    insightsList.innerHTML = '';
-    const topCategories = Object.entries(categories)
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 3)
-        .map(([cat, amt]) => {
-            const messages = {
-                Food: `Food’s eating $${amt.toFixed(2)}! Try meal prepping 🍳`,
-                Shopping: `$${amt.toFixed(2)} on shopping? Hunt for deals! 🤑`,
-                Entertainment: `$${amt.toFixed(2)} on fun? Check free events! 🎉`,
-                Transport: `$${amt.toFixed(2)} on rides? Carpool vibes! 🚗`,
-                Bills: `$${amt.toFixed(2)} on bills? Cut subscriptions! 📺`,
-                Hobbies: `$${amt.toFixed(2)} on hobbies? DIY some fun! 🖌️`,
-                Travel: `$${amt.toFixed(2)} on travel? Plan budget trips! 🌍`,
-                "Self-Care": `$${amt.toFixed(2)} on self-care? Free workouts FTW! 💪`,
-                Education: `$${amt.toFixed(2)} on learning? Free courses rock! 📚`,
-                Other: `$${amt.toFixed(2)} on random stuff? Track that cash! 💸`
-            };
-            return `<p class="text-lg">${messages[cat]}</p>`;
+    loadChartJs(() => {
+        const categories = {};
+        spending.forEach(item => {
+            categories[item.category] = (categories[item.category] || 0) + item.amount;
         });
-    insightsList.innerHTML = insightsList.innerHTML || '<p>No insights yet! Add some spending!</p>';
+        
+        const chartData = {
+            labels: Object.keys(categories),
+            datasets: [{
+                data: Object.values(categories),
+                backgroundColor: ['#ff1493', '#00b7eb', '#00ff00', '#ff4444', '#ffd700', '#6b7280', '#8b5cf6', '#ec4899', '#3b82f6', '#22c55e']
+            }]
+        };
+        
+        const ctx = document.getElementById('spending-chart').getContext('2d');
+        if (window.spendingChart) window.spendingChart.destroy();
+        window.spendingChart = new Chart(ctx, {
+            type: 'pie',
+            data: chartData,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'bottom', labels: { color: '#fff' } }
+                }
+            }
+        });
+        
+        const insightsList = document.getElementById('insights-list');
+        insightsList.innerHTML = '';
+        const topCategories = Object.entries(categories)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 3)
+            .map(([cat, amt]) => {
+                const messages = {
+                    Food: `Food’s eating $${amt.toFixed(2)}! Try meal prepping 🍳`,
+                    Shopping: `$${amt.toFixed(2)} on shopping? Hunt for deals! 🤑`,
+                    Entertainment: `$${amt.toFixed(2)} on fun? Check free events! 🎉`,
+                    Transport: `$${amt.toFixed(2)} on rides? Carpool vibes! 🚗`,
+                    Bills: `$${amt.toFixed(2)} on bills? Cut subscriptions! 📺`,
+                    Hobbies: `$${amt.toFixed(2)} on hobbies? DIY some fun! 🖌️`,
+                    Travel: `$${amt.toFixed(2)} on travel? Plan budget trips! 🌍`,
+                    "Self-Care": `$${amt.toFixed(2)} on self-care? Free workouts FTW! 💪`,
+                    Education: `$${amt.toFixed(2)} on learning? Free courses rock! 📚`,
+                    Other: `$${amt.toFixed(2)} on random stuff? Track that cash! 💸`
+                };
+                return `<p class="text-lg">${messages[cat]}</p>`;
+            });
+        insightsList.innerHTML = insightsList.innerHTML || '<p>No insights yet! Add some spending!</p>';
+    });
 }
 
-// Tab navigation
 function setupTabNavigation() {
     const tabs = document.querySelectorAll('.tab-btn');
     const contents = document.querySelectorAll('.tab-content');

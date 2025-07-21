@@ -1,7 +1,7 @@
-/* Shifting gradient background animation */
 body {
     animation: gradientShift 15s ease infinite;
     background-size: 200% 200%;
+    font-size: 1.1rem; 
 }
 
 @keyframes gradientShift {
@@ -10,12 +10,10 @@ body {
     100% { background-position: 0% 50%; }
 }
 
-/* Neon glow effect for logo and headers */
 .neon-glow {
-    text-shadow: 0 0 10px #ff1493, 0 0 15px #00b7eb, 0 0 20px #00ff00;
+    text-shadow: 0 0 8px #ff1493, 0 0 12px #00b7eb, 0 0 15px #00ff00; 
 }
 
-/* Pulsing logo animation */
 .pulse-logo {
     animation: pulse 2s ease-in-out infinite;
 }
@@ -25,25 +23,23 @@ body {
     50% { transform: scale(1.05); }
 }
 
-/* Ensure inputs and select have consistent styling */
 input:focus, select:focus {
     box-shadow: 0 0 5px #ff1493;
 }
 
-/* Table styling */
 table {
     border-collapse: collapse;
 }
 
 th, td {
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    padding: 8px;
+    padding: 10px; 
 }
 
 button.delete-btn, button.edit-btn {
     background-color: #ff4444;
     color: white;
-    padding: 4px 8px;
+    padding: 5px 10px; 
     border: none;
     border-radius: 4px;
     cursor: pointer;
@@ -62,7 +58,6 @@ button.edit-btn:hover {
     background-color: #0090c0;
 }
 
-/* Progress bar styling */
 .progress-bar {
     width: 100%;
     background-color: #4a5568;
@@ -76,18 +71,15 @@ button.edit-btn:hover {
     transition: width 0.3s ease-in-out;
 }
 
-/* Active tab styling */
 .tab-btn.active {
     background-color: #ff1493 !important;
     box-shadow: 0 0 5px #ff1493;
 }
 
-/* Inactive tab styling */
 .tab-btn {
     transition: background-color 0.3s;
 }
 
-/* Pulsing button animation */
 .pulse-button {
     animation: pulseButton 1.5s ease-in-out infinite;
 }
@@ -97,7 +89,6 @@ button.edit-btn:hover {
     50% { transform: scale(1.03); }
 }
 
-/* Mascot styling */
 .mascot {
     text-shadow: 0 0 5px #00b7eb, 0 0 10px #ff1493;
     animation: bounce 1s ease-in-out;
@@ -108,15 +99,27 @@ button.edit-btn:hover {
     50% { transform: translateY(-10px); }
 }
 
-/* Hustle card styling */
 .hustle-card {
     background: linear-gradient(to right, #ff1493, #00b7eb);
-    padding: 16px;
+    padding: 18px; 
     border-radius: 8px;
-    margin-bottom: 16px;
+    margin-bottom: 18px; 
     transition: transform 0.3s;
 }
 
 .hustle-card:hover {
     transform: scale(1.05);
+}
+
+.badge {
+    background: linear-gradient(to right, #ff1493, #00b7eb);
+    padding: 8px 16px;
+    border-radius: 16px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-shadow: 0 0 5px #00ff00;
+}
+
+#notification {
+    z-index: 1000;
 }
