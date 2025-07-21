@@ -1,0 +1,32 @@
+/* Neon glow effect for the StackZ logo */
+.neon-glow {
+    text-shadow: 0 0 10px #ff1493, 0 0 20px #00ff00, 0 0 30px #00b7eb;
+}
+
+/* Ensure inputs and select have consistent styling */
+input:focus, select:focus {
+    box-shadow: 0 0 5px #ff1493;
+}
+
+/* Table styling */
+table {
+    border-collapse: collapse;
+}
+
+th, td {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 8px;
+}
+
+button.delete-btn {
+    background-color: #ff4444;
+    color: white;
+    padding: 4px 8px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button.delete全世界 -btn:hover {
+    background-color: #ff0000;
+}
